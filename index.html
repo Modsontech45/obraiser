@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Démo — Ô Braisé Lomé | Commander en ligne</title>
+  <meta name="description" content="DÉMO — Maquette non officielle. Commandez au restaurant Ô Braisé Lomé par WhatsApp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --charcoal: #1C1917;
+      --flame:    #E2571E;
+      --ember:    #F5A524;
+      --cream:    #FAF7F2;
+      --leaf:     #3F7D3C;
+      --text:     #2A2422;
+      --muted:    #7a736d;
+      --border:   #e2dcd4;
+      --shadow:   rgba(28,25,23,.1);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      font-family:'Inter', sans-serif;
+      background:var(--cream);
+      color:var(--text);
+      font-size:15px;
+      line-height:1.55;
+    }
+
+    h1, h2, h3 { font-family:'Anton', sans-serif; letter-spacing:.04em; }
+
+    svg { display:block; flex-shrink:0; }
+
+    /* ── DEMO BANNER ───────────────────────────────── */
+    .demo-banner {
+      position:sticky; top:0; z-index:1000;
+      background:#fff8e1;
+      border-bottom:2px solid #f0c040;
+      padding:10px 20px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      font-size:12px; font-weight:600; color:#5c3d02; line-height:1.4;
+    }
+    .demo-banner svg { flex-shrink:0; }
+    @media(max-width:480px){ .demo-banner { font-size:11px; } }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .hero {
+      background:var(--charcoal);
+      color:#fff;
+      padding:72px 20px 60px;
+      text-align:center;
+      position:relative; overflow:hidden;
+    }
+    .hero::after {
+      content:'';
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse at 68% 38%, rgba(226,87,30,.22) 0%, transparent 60%);
+      pointer-events:none;
+    }
+    .wordmark {
+      font-family:'Anton', sans-serif;
+      font-size:clamp(54px, 14vw, 92px);
+      letter-spacing:.07em;
+      line-height:1;
+      position:relative; z-index:1;
+    }
+    .wordmark .o      { color:var(--ember); }
+    .wordmark .braise { color:var(--flame); }
+
+    .hero-tagline {
+      color:rgba(255,255,255,.75);
+      font-size:clamp(14px, 3.6vw, 17px);
+      margin:20px auto 36px;
+      max-width:380px;
+      position:relative; z-index:1;
+      font-weight:400;
+    }
+
+    .hero-btns {
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+      position:relative; z-index:1;
+    }
+
+    .btn-fire {
+      background:var(--flame); color:#fff; border:none;
+      padding:14px 32px;
+      font-family:'Anton',sans-serif; font-size:16px; letter-spacing:.06em;
+      border-radius:3px; cursor:pointer; text-decoration:none; display:inline-block;
+      transition:background .18s, transform .12s;
+    }
+    .btn-fire:hover { background:var(--ember); color:var(--charcoal); }
+    .btn-fire:active { transform:scale(.97); }
+
+    .btn-call {
+      background:transparent; color:#fff;
+      border:2px solid rgba(255,255,255,.38);
+      padding:12px 24px;
+      font-family:'Anton',sans-serif; font-size:16px; letter-spacing:.06em;
+      border-radius:3px; cursor:pointer; text-decoration:none;
+      display:inline-flex; align-items:center; gap:8px;
+      transition:all .18s;
+    }
+    .btn-call:hover { border-color:#fff; background:rgba(255,255,255,.08); }
+
+    /* ── MENU ──────────────────────────────────────── */
+    .section-menu {
+      padding:48px 16px 130px;
+      max-width:840px; margin:0 auto;
+    }
+
+    .section-heading {
+      font-size:clamp(28px, 7vw, 44px);
+      color:var(--charcoal);
+      margin-bottom:4px;
+    }
+
+    .section-sub {
+      font-size:12px; color:var(--muted); font-style:italic; margin-bottom:28px;
+    }
+
+    .cat-tabs {
+      display:flex; gap:6px; overflow-x:auto;
+      padding-bottom:6px; margin-bottom:28px;
+      scrollbar-width:none;
+    }
+    .cat-tabs::-webkit-scrollbar { display:none; }
+
+    .tab-btn {
+      background:#fff; border:1.5px solid var(--border); color:var(--muted);
+      padding:8px 18px; border-radius:2px;
+      font-size:12px; font-weight:700; letter-spacing:.06em;
+      cursor:pointer; white-space:nowrap; text-transform:uppercase;
+      transition:all .18s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background:var(--charcoal); border-color:var(--charcoal); color:#fff;
+    }
+
+    .menu-cat { display:none; }
+    .menu-cat.on { display:block; }
+
+    .cat-heading {
+      font-family:'Anton',sans-serif; font-size:20px; color:var(--charcoal);
+      display:inline-block;
+      border-bottom:3px solid var(--flame);
+      padding-bottom:4px; margin-bottom:20px;
+      letter-spacing:.05em;
+    }
+
+    .item-grid {
+      display:grid; grid-template-columns:1fr; gap:12px;
+    }
+    @media(min-width:540px){ .item-grid { grid-template-columns:repeat(2,1fr); } }
+
+    .item-card {
+      background:#fff; border-radius:4px;
+      border:1px solid var(--border);
+      overflow:hidden; display:flex; flex-direction:column;
+    }
+
+    .item-photo {
+      height:160px;
+      background:#1e1410;
+      position:relative; overflow:hidden;
+    }
+    .item-photo img {
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+
+    .item-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+    .halal {
+      display:inline-block; background:var(--leaf); color:#fff;
+      font-size:10px; font-weight:700; padding:2px 7px; border-radius:2px;
+      margin-bottom:7px; letter-spacing:.06em;
+    }
+    .item-name { font-weight:600; font-size:14px; margin-bottom:3px; line-height:1.35; }
+    .item-desc { font-size:12px; color:var(--muted); flex:1; margin-bottom:12px; line-height:1.45; }
+
+    .item-footer { display:flex; align-items:center; justify-content:space-between; }
+    .item-price { font-family:'Anton',sans-serif; font-size:17px; color:var(--flame); letter-spacing:.02em; }
+
+    .qty-ctrl { display:flex; align-items:center; gap:8px; }
+    .qty-btn {
+      width:28px; height:28px; border-radius:50%;
+      border:1.5px solid var(--flame); background:transparent; color:var(--flame);
+      font-size:17px; font-weight:600; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .15s; line-height:1; user-select:none;
+    }
+    .qty-btn:hover  { background:var(--flame); color:#fff; }
+    .qty-btn:active { transform:scale(.92); }
+    .qty-num { font-weight:600; font-size:15px; min-width:18px; text-align:center; }
+
+    /* ── STICKY CART BAR ───────────────────────────── */
+    .cart-bar {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--charcoal); color:#fff;
+      padding:12px 20px;
+      display:none; align-items:center; justify-content:space-between;
+      z-index:900; box-shadow:0 -4px 24px rgba(0,0,0,.3);
+      border-top:2px solid rgba(226,87,30,.4);
+    }
+    .cart-bar.on { display:flex; }
+    .cb-label { font-size:11px; color:rgba(255,255,255,.5); letter-spacing:.04em; text-transform:uppercase; }
+    .cb-total { font-family:'Anton',sans-serif; font-size:21px; color:var(--ember); }
+    .cb-cta {
+      background:var(--flame); color:#fff; border:none;
+      padding:11px 22px;
+      font-family:'Anton',sans-serif; font-size:14px; letter-spacing:.06em;
+      border-radius:3px; cursor:pointer; transition:background .18s;
+    }
+    .cb-cta:hover { background:var(--ember); color:var(--charcoal); }
+
+    /* ── CHECKOUT ──────────────────────────────────── */
+    .section-checkout {
+      background:var(--charcoal); color:#fff;
+      padding:56px 16px 64px;
+    }
+    .checkout-inner { max-width:520px; margin:0 auto; }
+    .checkout-inner .section-heading { color:#fff; margin-bottom:6px; }
+    .checkout-sub { color:rgba(255,255,255,.5); font-size:13px; margin-bottom:32px; }
+
+    .cart-recap {
+      background:rgba(255,255,255,.055); border-radius:4px;
+      border:1px solid rgba(255,255,255,.1);
+      padding:16px; margin-bottom:28px;
+    }
+    .recap-label {
+      font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+      color:rgba(255,255,255,.4); margin-bottom:12px;
+    }
+    .recap-list { list-style:none; }
+    .recap-row {
+      display:flex; justify-content:space-between;
+      padding:7px 0; border-bottom:1px solid rgba(255,255,255,.07);
+      font-size:14px;
+    }
+    .recap-row:last-child { border-bottom:none; }
+    .recap-total {
+      display:flex; justify-content:space-between;
+      margin-top:12px; padding-top:12px;
+      border-top:2px solid var(--flame);
+      font-family:'Anton',sans-serif; font-size:19px; color:var(--ember);
+    }
+    .cart-empty-msg { color:rgba(255,255,255,.32); font-style:italic; font-size:13px; padding:6px 0; }
+
+    .form-group { margin-bottom:18px; }
+    .form-lbl {
+      display:block; font-size:12px; font-weight:700; letter-spacing:.05em;
+      text-transform:uppercase; margin-bottom:7px; color:rgba(255,255,255,.65);
+    }
+    .form-inp, .form-ta {
+      width:100%; padding:12px 14px;
+      border:1.5px solid rgba(255,255,255,.14); border-radius:4px;
+      background:rgba(255,255,255,.07); color:#fff;
+      font-family:'Inter',sans-serif; font-size:15px;
+      transition:border-color .18s;
+      -webkit-appearance:none; appearance:none;
+    }
+    .form-inp::placeholder, .form-ta::placeholder { color:rgba(255,255,255,.25); }
+    .form-inp:focus, .form-ta:focus { outline:none; border-color:var(--flame); }
+    .form-ta { resize:vertical; min-height:78px; }
+
+    .toggle-row { display:flex; border:1.5px solid rgba(255,255,255,.18); border-radius:4px; overflow:hidden; }
+    .tog-btn {
+      flex:1; padding:12px 8px; background:transparent; color:rgba(255,255,255,.5);
+      border:none; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+      cursor:pointer; transition:all .18s;
+      display:flex; align-items:center; justify-content:center; gap:7px;
+    }
+    .tog-btn.active { background:var(--flame); color:#fff; }
+
+    .btn-wa {
+      width:100%; background:#25D366; color:#fff; border:none;
+      padding:16px; border-radius:4px;
+      font-family:'Anton',sans-serif; font-size:17px; letter-spacing:.05em;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+      transition:background .18s; margin-top:10px;
+    }
+    .btn-wa:hover { background:#1fb558; }
+
+    /* ── PAYMENT (visual) ──────────────────────────── */
+    .section-pay { background:#fff; padding:52px 16px; }
+    .pay-inner { max-width:520px; margin:0 auto; }
+    .pay-inner .section-heading { color:var(--charcoal); margin-bottom:6px; }
+    .pay-note { font-size:12px; color:#bbb; font-style:italic; margin-bottom:24px; }
+    .pay-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .pay-card {
+      position:relative; flex:1; min-width:110px;
+      padding:18px 12px; border:1.5px solid var(--border); border-radius:4px;
+      background:#f8f4ef; opacity:.55; cursor:not-allowed; text-align:center;
+    }
+    .pay-name { font-weight:700; font-size:14px; color:var(--text); margin-bottom:3px; }
+    .pay-sub  { font-size:11px; color:#bbb; }
+    .pay-tip {
+      position:absolute; bottom:calc(100% + 8px); left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.8); color:#fff;
+      font-size:11px; padding:6px 10px; border-radius:3px;
+      white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s;
+      z-index:10;
+    }
+    .pay-card:hover .pay-tip { opacity:1; }
+
+    /* ── INFO ──────────────────────────────────────── */
+    .section-info { padding:52px 16px; background:var(--cream); }
+    .info-inner { max-width:720px; margin:0 auto; }
+    .info-inner .section-heading { color:var(--charcoal); margin-bottom:32px; }
+    .info-grid { display:grid; grid-template-columns:1fr; gap:20px; }
+    @media(min-width:640px){ .info-grid { grid-template-columns:1fr 1fr; } }
+
+    .info-card {
+      background:#fff; border-radius:4px;
+      border:1px solid var(--border);
+      padding:24px;
+    }
+    .info-card-title {
+      font-family:'Anton',sans-serif; font-size:16px; color:var(--flame);
+      letter-spacing:.06em; margin-bottom:18px;
+    }
+
+    .hours-tbl { width:100%; border-collapse:collapse; }
+    .hours-tbl tr { border-bottom:1px solid #f0ece5; }
+    .hours-tbl tr:last-child { border-bottom:none; }
+    .hours-tbl td { padding:7px 0; font-size:14px; }
+    .hours-tbl .day { font-weight:600; width:96px; }
+    .hours-tbl .closed { color:#c53030; font-weight:700; letter-spacing:.02em; }
+    .hours-tbl tr.today td { color:var(--flame); font-weight:700; }
+    .hours-tbl tr.today td.closed { color:#c53030; }
+
+    .addr-text { font-size:14px; line-height:1.8; margin-bottom:18px; color:var(--text); }
+
+    .map-btn {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:10px 18px;
+      background:var(--flame); color:#fff; text-decoration:none;
+      border-radius:3px; font-size:13px; font-weight:600;
+      transition:background .18s;
+    }
+    .map-btn:hover { background:var(--ember); color:var(--charcoal); }
+
+    .social-list { display:flex; flex-direction:column; gap:8px; }
+    .social-item {
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; color:var(--text); font-size:14px; font-weight:500;
+      padding:10px 12px; border-radius:3px; border:1px solid var(--border);
+      transition:all .18s;
+    }
+    .social-item:hover { border-color:var(--flame); color:var(--flame); }
+
+    .s-icon {
+      width:30px; height:30px; border-radius:6px;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .s-ig { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+    .s-tt { background:#010101; }
+    .s-fb { background:#1877f2; }
+    .s-wa { background:#25D366; }
+
+    .delivery-chips { display:flex; gap:8px; flex-wrap:wrap; }
+    .delivery-chip {
+      padding:7px 14px; border:1px solid var(--border);
+      border-radius:20px; font-size:13px; font-weight:600; color:var(--text);
+      display:flex; align-items:center; gap:6px;
+    }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    footer {
+      background:var(--charcoal); color:rgba(255,255,255,.42);
+      padding:30px 16px; text-align:center; font-size:12px; line-height:1.9;
+    }
+    footer a { color:rgba(255,255,255,.52); }
+    footer a:hover { color:var(--ember); }
+    footer strong { color:rgba(255,255,255,.68); }
+    .footer-warn {
+      display:inline-flex; align-items:center; gap:6px;
+      margin-bottom:6px; color:rgba(255,255,255,.55);
+      font-weight:600; font-size:12px;
+    }
+
+    /* ── TOAST ─────────────────────────────────────── */
+    .toast {
+      position:fixed; top:72px; left:50%;
+      transform:translateX(-50%) translateY(-10px);
+      background:var(--charcoal); color:#fff;
+      padding:10px 20px; border-radius:4px;
+      font-size:13px; font-weight:500; border-left:3px solid var(--flame);
+      opacity:0; pointer-events:none; z-index:1100;
+      white-space:nowrap; transition:all .22s;
+    }
+    .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- 1. DEMO BANNER -->
+<div class="demo-banner" role="alert">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="#b45309" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+  DÉMO — maquette non officielle réalisée par <a href="https://operals.com" target="_blank" rel="noopener" style="color:#5c3d02;font-weight:700;">Operals.com</a> &nbsp;·&nbsp; non affiliée à Ô Braisé &nbsp;·&nbsp; aucune commande réelle ne sera traitée
+</div>
+
+<!-- 2. HERO -->
+<section class="hero">
+  <div class="wordmark"><span class="o">Ô</span> <span class="braise">BRAISÉ</span></div>
+  <p class="hero-tagline">Poulet braisé, wings, burgers. Commandez en 2 minutes.</p>
+  <div class="hero-btns">
+    <a href="#menu" class="btn-fire">Commander</a>
+    <a href="tel:+22891281030" class="btn-call">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      Appeler
+    </a>
+  </div>
+</section>
+
+<!-- 3. MENU -->
+<section class="section-menu" id="menu">
+  <h2 class="section-heading">Le menu</h2>
+  <p class="section-sub">Prix indicatifs en FCFA — à confirmer avec le restaurant</p>
+
+  <div class="cat-tabs" role="tablist">
+    <button class="tab-btn active" onclick="showCat('combos',this)" role="tab" aria-selected="true">Combos</button>
+    <button class="tab-btn" onclick="showCat('wings',this)" role="tab">Wings</button>
+    <button class="tab-btn" onclick="showCat('burgers',this)" role="tab">Burgers</button>
+    <button class="tab-btn" onclick="showCat('salades',this)" role="tab">Salades</button>
+    <button class="tab-btn" onclick="showCat('accomp',this)" role="tab">À côté</button>
+    <button class="tab-btn" onclick="showCat('boissons',this)" role="tab">Boissons</button>
+  </div>
+
+  <div class="menu-cat on" id="cat-combos">
+    <div class="cat-heading">Combos Poulet</div>
+    <div class="item-grid" id="grid-combos"></div>
+  </div>
+  <div class="menu-cat" id="cat-wings">
+    <div class="cat-heading">BBQ Chicken Wings</div>
+    <div class="item-grid" id="grid-wings"></div>
+  </div>
+  <div class="menu-cat" id="cat-burgers">
+    <div class="cat-heading">Burgers</div>
+    <div class="item-grid" id="grid-burgers"></div>
+  </div>
+  <div class="menu-cat" id="cat-salades">
+    <div class="cat-heading">Salades</div>
+    <div class="item-grid" id="grid-salades"></div>
+  </div>
+  <div class="menu-cat" id="cat-accomp">
+    <div class="cat-heading">Accompagnements</div>
+    <div class="item-grid" id="grid-accomp"></div>
+  </div>
+  <div class="menu-cat" id="cat-boissons">
+    <div class="cat-heading">Boissons</div>
+    <div class="item-grid" id="grid-boissons"></div>
+  </div>
+</section>
+
+<!-- STICKY CART BAR -->
+<div class="cart-bar" id="cart-bar" aria-live="polite">
+  <div>
+    <div class="cb-label" id="cb-count">0 article</div>
+    <div class="cb-total" id="cb-total">0 FCFA</div>
+  </div>
+  <button class="cb-cta" onclick="goCheckout()">Commander</button>
+</div>
+
+<!-- 4. CHECKOUT -->
+<section class="section-checkout" id="checkout">
+  <div class="checkout-inner">
+    <h2 class="section-heading">Votre commande</h2>
+    <p class="checkout-sub">Votre commande arrive directement dans notre WhatsApp — rien à télécharger.</p>
+
+    <div class="cart-recap">
+      <div class="recap-label">Récapitulatif</div>
+      <ul class="recap-list" id="recap-list">
+        <li class="cart-empty-msg">Panier vide — choisissez vos plats ci-dessus.</li>
+      </ul>
+      <div class="recap-total" id="recap-total" style="display:none">
+        <span>Total</span>
+        <span id="recap-total-val"></span>
+      </div>
+    </div>
+
+    <form id="order-form" onsubmit="submitOrder(event)" novalidate>
+      <div class="form-group">
+        <label class="form-lbl" for="f-name">Votre nom</label>
+        <input class="form-inp" type="text" id="f-name" placeholder="Prénom et nom" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl" for="f-phone">Téléphone</label>
+        <input class="form-inp" type="tel" id="f-phone" placeholder="+228 XX XX XX XX" required autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Récupération</label>
+        <div class="toggle-row">
+          <button type="button" class="tog-btn active" id="tog-pickup" onclick="setMode('pickup')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4v2l8 5 8-5V4zM4 13v7h16v-7l-8 5-8-5z"/></svg>
+            Sur place / Emporter
+          </button>
+          <button type="button" class="tog-btn" id="tog-delivery" onclick="setMode('delivery')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5 1.96 2.5H17V9.5h2.5zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Livraison
+          </button>
+        </div>
+      </div>
+      <div class="form-group" id="addr-group" style="display:none">
+        <label class="form-lbl" for="f-addr">Adresse de livraison</label>
+        <input class="form-inp" type="text" id="f-addr" placeholder="Quartier, rue, point de repère…" autocomplete="street-address">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl" for="f-note">Note (optionnel)</label>
+        <textarea class="form-ta" id="f-note" placeholder="Instructions particulières, allergies, cuisson préférée…"></textarea>
+      </div>
+
+      <button type="submit" class="btn-wa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Envoyer la commande par WhatsApp
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- 5. PAIEMENT (visual only) -->
+<section class="section-pay">
+  <div class="pay-inner">
+    <h2 class="section-heading">Paiement</h2>
+    <p class="pay-note">Paiement mobile intégrable — démo non active.</p>
+    <div class="pay-row">
+      <div class="pay-card">
+        <div class="pay-tip">Démo — paiement non actif</div>
+        <div class="pay-name">T-Money</div>
+        <div class="pay-sub">Togocel</div>
+      </div>
+      <div class="pay-card">
+        <div class="pay-tip">Démo — paiement non actif</div>
+        <div class="pay-name">Flooz</div>
+        <div class="pay-sub">Moov Africa</div>
+      </div>
+      <div class="pay-card">
+        <div class="pay-tip">Démo — paiement non actif</div>
+        <div class="pay-name">Espèces</div>
+        <div class="pay-sub">À la livraison</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. INFOS -->
+<section class="section-info">
+  <div class="info-inner">
+    <h2 class="section-heading">Infos</h2>
+    <div class="info-grid">
+
+      <div class="info-card">
+        <div class="info-card-title">HORAIRES</div>
+        <table class="hours-tbl">
+          <tr id="d-lun"><td class="day">Lundi</td><td>11h – 22h</td></tr>
+          <tr id="d-mar"><td class="day">Mardi</td><td>11h – 22h</td></tr>
+          <tr id="d-mer"><td class="day">Mercredi</td><td class="closed">Fermé</td></tr>
+          <tr id="d-jeu"><td class="day">Jeudi</td><td>11h – 22h</td></tr>
+          <tr id="d-ven"><td class="day">Vendredi</td><td>11h – 23h</td></tr>
+          <tr id="d-sam"><td class="day">Samedi</td><td>11h – 23h</td></tr>
+          <tr id="d-dim"><td class="day">Dimanche</td><td>15h – 22h</td></tr>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">ADRESSE</div>
+        <p class="addr-text">
+          Avenue de la Paix, Super Taco<br>
+          Non loin de l'ESA<br>
+          <strong>Lomé, Togo</strong>
+        </p>
+        <a href="https://maps.google.com/?q=Ô+Braisé+Lomé+Togo+Avenue+de+la+Paix+Super+Taco" target="_blank" rel="noopener" class="map-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          Voir sur Google Maps
+        </a>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">RÉSEAUX SOCIAUX</div>
+        <div class="social-list">
+          <a href="https://instagram.com/obraise_lome" target="_blank" rel="noopener" class="social-item">
+            <span class="s-icon s-ig">
+              <svg width="15" height="15" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </span>
+            @obraise_lome
+          </a>
+          <a href="https://tiktok.com/@obraise_lome" target="_blank" rel="noopener" class="social-item">
+            <span class="s-icon s-tt">
+              <svg width="15" height="15" fill="white" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/></svg>
+            </span>
+            @obraise_lome
+          </a>
+          <a href="https://www.facebook.com/obraiselome" target="_blank" rel="noopener" class="social-item">
+            <span class="s-icon s-fb">
+              <svg width="15" height="15" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </span>
+            Ô Braisé Lomé
+          </a>
+          <a href="https://wa.me/22891281030" target="_blank" rel="noopener" class="social-item">
+            <span class="s-icon s-wa">
+              <svg width="15" height="15" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </span>
+            +228 91 28 10 30
+          </a>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">LIVRAISON</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Commandez aussi via nos partenaires livraison :</p>
+        <div class="delivery-chips">
+          <span class="delivery-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" aria-hidden="true"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5 1.96 2.5H17V9.5h2.5zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Gozem
+          </span>
+          <span class="delivery-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--muted)" aria-hidden="true"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5 1.96 2.5H17V9.5h2.5zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Kaba
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 7. FOOTER -->
+<footer>
+  <div class="footer-warn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,.5)" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+    DÉMO — Maquette non officielle · Non affiliée à Ô Braisé Lomé
+  </div>
+  <p>Réalisée par <strong><a href="https://operals.com">Operals.com</a></strong></p>
+  <p style="margin-top:6px;font-size:11px;">Aucune commande réelle traitée · Aucune donnée collectée</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const U = id => `https://images.unsplash.com/photo-${id}?w=600&q=75&auto=format&fit=crop`;
+
+const MENU = {
+  combos: [
+    {id:'c1', name:'Combo Poulet Ô Braisé', desc:'Poulet entier braisé + accompagnement au choix', price:6500,  img:U('1567121938596-6d9d015d348b')},
+    {id:'c2', name:'Solo Poulet',            desc:'Demi poulet braisé + accompagnement',            price:4000,  img:U('1762631934518-f75e233413ca')},
+    {id:'c3', name:'Combo Familial',         desc:'Poulet entier + 2 accompagnements + 2 boissons', price:12000, img:U('1567932847833-ecb7e227c2a3')},
+    {id:'c4', name:'Combo Enfant',           desc:'Pilon braisé + frites + boisson',                price:2500,  img:U('1638439430466-b2bb7fdc1d67')},
+  ],
+  wings: [
+    {id:'w1', name:'Wings BBQ 6 pcs',  desc:'Ailes croustillantes, sauce BBQ fumée maison', price:3500, img:U('1567620832903-9fc6debc209f')},
+    {id:'w2', name:'Wings BBQ 12 pcs', desc:'Format familial — même sauce BBQ fumée',        price:6000, img:U('1608039755401-742074f0548d')},
+    {id:'w3', name:'Wings Solo 3 pcs', desc:'Sauce BBQ ou sauce pimentée, au choix',         price:2000, img:U('1527477396000-e27163b481c2')},
+  ],
+  burgers: [
+    {id:'b1', name:'Burger Braisé', desc:'Steak haché braisé, salade, tomate, sauce maison',  price:3000, img:U('1543339469-94ba2391431f')},
+    {id:'b2', name:'Burger BBQ',    desc:'Double steak, sauce BBQ fumée, oignons caramélisés', price:4000, img:U('1542554762515-82be5d8f0bfa')},
+    {id:'b3', name:'Burger Poulet', desc:'Filet de poulet braisé, mayo épicée, crudités',      price:2800, img:U('1568901346375-23c9450c58cd')},
+  ],
+  salades: [
+    {id:'s1', name:'Salade César',     desc:'Poulet grillé, laitue, parmesan, croûtons',           price:3500, img:U('1556386734-4227a180d19e'), halal:true},
+    {id:'s2', name:'Salade du marché', desc:'Légumes frais du marché de Lomé, vinaigrette citron', price:2000, img:U('1625128726814-461fc67f682d')},
+  ],
+  accomp: [
+    {id:'a1', name:'Frites',         desc:'Dorées, croustillantes',       price:1000, img:U('1541592106381-b31e9677c0e5')},
+    {id:'a2', name:'Riz',            desc:'Riz blanc vapeur',              price:800,  img:U('1591467639009-9d018f445f5a')},
+    {id:'a3', name:'Salade de chou', desc:'Chou frais, assaisonné maison', price:600,  img:U('1570689283785-917fbe6376c2')},
+    {id:'a4', name:'Alloco',         desc:'Plantain frit, bien doré',      price:800,  img:U('1537495988501-f9cd94a78f3e')},
+  ],
+  boissons: [
+    {id:'bo1', name:'Coca / Fanta / Sprite', desc:'33cl, bien frais',              price:500, img:U('1544241907-f3f1f5ded15a')},
+    {id:'bo2', name:'Eau minérale',           desc:'Bouteille 50cl',                price:300, img:U('1675914861279-921639cd47e1')},
+    {id:'bo3', name:'Jus naturel du jour',    desc:'Pressé ou mixé, selon le jour', price:800, img:U('1600271886742-f049cd451bba')},
+  ],
+};
+
+const cart = {};
+
+function fmt(n) {
+  return n.toLocaleString('fr-FR') + ' FCFA';
+}
+
+function cartCount() {
+  return Object.values(cart).reduce((s, i) => s + i.qty, 0);
+}
+
+function cartTotal() {
+  return Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
+}
+
+function changeQty(id, name, price, delta) {
+  if (!cart[id]) {
+    if (delta < 0) return;
+    cart[id] = {name, price, qty: 0};
+  }
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  refreshQtyBtn(id);
+  refreshCartUI();
+  if (delta > 0) toast(name + ' ajouté');
+}
+
+function refreshQtyBtn(id) {
+  const num   = document.getElementById('qty-' + id);
+  const minus = document.getElementById('minus-' + id);
+  if (!num) return;
+  const qty = cart[id] ? cart[id].qty : 0;
+  num.textContent = qty;
+  minus.style.opacity = qty === 0 ? '0.3' : '1';
+}
+
+function refreshCartUI() {
+  const count = cartCount();
+  const total = cartTotal();
+
+  document.getElementById('cb-count').textContent = count + ' article' + (count !== 1 ? 's' : '');
+  document.getElementById('cb-total').textContent = fmt(total);
+  document.getElementById('cart-bar').classList.toggle('on', count > 0);
+
+  const list = document.getElementById('recap-list');
+  const trow = document.getElementById('recap-total');
+  const tval = document.getElementById('recap-total-val');
+
+  if (count === 0) {
+    list.innerHTML = '<li class="cart-empty-msg">Panier vide — choisissez vos plats ci-dessus.</li>';
+    trow.style.display = 'none';
+  } else {
+    list.innerHTML = Object.values(cart).map(i =>
+      '<li class="recap-row"><span>' + i.qty + '× ' + i.name + '</span><span>' + fmt(i.price * i.qty) + '</span></li>'
+    ).join('');
+    trow.style.display = 'flex';
+    tval.textContent = fmt(total);
+  }
+}
+
+function renderMenu() {
+  Object.entries(MENU).forEach(([key, items]) => {
+    const grid = document.getElementById('grid-' + key);
+    if (!grid) return;
+    grid.innerHTML = items.map(item => `
+      <div class="item-card">
+        <div class="item-photo">
+          <img src="${item.img}" alt="${item.name}" loading="lazy" width="600" height="160">
+        </div>
+        <div class="item-body">
+          ${item.halal ? '<span class="halal">HALAL</span>' : ''}
+          <div class="item-name">${item.name}</div>
+          <div class="item-desc">${item.desc}</div>
+          <div class="item-footer">
+            <span class="item-price">${fmt(item.price)}</span>
+            <div class="qty-ctrl">
+              <button class="qty-btn" id="minus-${item.id}" onclick="changeQty('${item.id}','${item.name.replace(/'/g, "\\'")}',${item.price},-1)" aria-label="Retirer un ${item.name}">&#8722;</button>
+              <span class="qty-num" id="qty-${item.id}" aria-live="polite">0</span>
+              <button class="qty-btn" id="plus-${item.id}"  onclick="changeQty('${item.id}','${item.name.replace(/'/g, "\\'")}',${item.price}, 1)" aria-label="Ajouter un ${item.name}">&#43;</button>
+            </div>
+          </div>
+        </div>
+      </div>`
+    ).join('');
+  });
+}
+
+function showCat(key, btn) {
+  document.querySelectorAll('.menu-cat').forEach(el => {
+    el.classList.remove('on');
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  document.getElementById('cat-' + key).classList.add('on');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+}
+
+let mode = 'pickup';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tog-pickup').classList.toggle('active',   m === 'pickup');
+  document.getElementById('tog-delivery').classList.toggle('active', m === 'delivery');
+  const ag = document.getElementById('addr-group');
+  const ai = document.getElementById('f-addr');
+  ag.style.display = m === 'delivery' ? 'block' : 'none';
+  ai.required      = m === 'delivery';
+}
+
+function goCheckout() {
+  document.getElementById('checkout').scrollIntoView({behavior: 'smooth'});
+}
+
+function submitOrder(e) {
+  e.preventDefault();
+
+  if (cartCount() === 0) {
+    toast('Votre panier est vide.');
+    document.getElementById('menu').scrollIntoView({behavior: 'smooth'});
+    return;
+  }
+
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const address = document.getElementById('f-addr').value.trim();
+  const note    = document.getElementById('f-note').value.trim();
+
+  if (!name)  { toast('Indiquez votre nom.'); document.getElementById('f-name').focus(); return; }
+  if (!phone) { toast('Indiquez votre numéro.'); document.getElementById('f-phone').focus(); return; }
+  if (mode === 'delivery' && !address) { toast('Indiquez votre adresse.'); document.getElementById('f-addr').focus(); return; }
+
+  const lines = ['Bonjour Ô Braisé, je voudrais commander :'];
+  Object.values(cart).forEach(i => {
+    lines.push('- ' + i.qty + 'x ' + i.name + ' — ' + fmt(i.price * i.qty));
+  });
+  lines.push('Total : ' + fmt(cartTotal()));
+  lines.push('Mode : ' + (mode === 'delivery' ? 'Livraison' : 'Emporter / sur place'));
+  lines.push('Nom : ' + name);
+  lines.push('Tél : ' + phone);
+  if (mode === 'delivery' && address) lines.push('Adresse : ' + address);
+  if (note) lines.push('Note : ' + note);
+
+  window.open('https://wa.me/22891281030?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener,noreferrer');
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+function highlightToday() {
+  const ids = ['d-dim','d-lun','d-mar','d-mer','d-jeu','d-ven','d-sam'];
+  const row = document.getElementById(ids[new Date().getDay()]);
+  if (row) row.classList.add('today');
+}
+
+renderMenu();
+highlightToday();
+</script>
+</body>
+</html>
